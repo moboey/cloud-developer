@@ -13,21 +13,11 @@ router.get('/', async (req: Request, res: Response) => {
                 item.url = AWS.getGetSignedUrl(item.url);
             }
     });
-    
     res.send(items);
 });
 
 //@TODO
-//Add an endpoint to GET a specific resource by Primary Key...
-router.get( '/:id', async ( req: Request, res: Response ) => {
-    let { id } = req.params;
-    const item = await FeedItem.findByPk(id);
-    if(item==null){
-        return res.status(400).send({ message: 'No records found' });
-    }
-    res.send(item);
-    
-  });
+//Add an endpoint to GET a specific resource by Primary Key
 
 // update a specific resource
 router.patch('/:id', 
