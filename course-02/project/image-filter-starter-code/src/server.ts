@@ -1,6 +1,9 @@
-import express from 'express';
+import express, { Router, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
+
+
+
 
 (async () => {
 
@@ -12,6 +15,40 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   
   // Use the body parser middleware for post requests
   app.use(bodyParser.json());
+
+  app.get( "/", ( req: Request, res: Response ) => {
+    res.status(200).send("/filteredimage");
+  } );
+
+  app.get( "/filteredimage/", async ( req: Request, res: Response ) => {
+    let { image_url } = req.query;
+
+    if ( !image_url ) {
+      return res.status(400)
+                .send(`URL is required`);
+    }
+    const filteredimage = await filterImageFromURL(image_url);
+
+    
+    res.status(200).sendFile(filteredimage);
+    //get list of filtered files
+
+    const tmpFolder = __dirname+'/util/tmp';
+    const filesys = require('fs');
+
+    filesys.readdir(tmpFolder, function(err: string, files: any[]){
+    //handling error
+      if (err) {
+          return console.log('Unable to scan directory: ' + err);
+      } 
+      deleteLocalFiles(files);   
+    });
+
+    
+
+    return res;
+  } );
+  
 
   // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
   // GET /filteredimage?image_url={{URL}}
