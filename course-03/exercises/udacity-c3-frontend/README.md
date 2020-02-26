@@ -1,13 +1,20 @@
 # Udagram Simple Frontend
 
-Udagram is a simple cloud application developed along side the Udacity Cloud Engineering Nanodegree. It allows users to register and log into a web client, post photos to the feed, and process photos using an image filtering microservice.
+Udagram is a simple cloud application developed along side the Udacity Cloud Engineering Nanodegree. It allows users to register and log into a web client, post photos to the feed microservice, and process photos using an image filtering microservice.
 
 The project is split into three parts:
-1. [The Simple Frontend](https://github.com/moboey/cloud-developer/tree/master/course-02/exercises/udacity-c2-frontend)
-A basic Ionic client web application which consumes the RestAPI Backend. 
-2. [The RestAPI Backend](https://github.com/moboey/cloud-developer/tree/master/course-02/exercises/udacity-c2-restapi), a Node-Express server which can be deployed to a cloud service.
+1. [The Simple Frontend](https://github.com/moboey/cloud-developer/tree/master/course-03/exercises/udacity-c3-frontend)
+A basic Ionic client web application which consumes the RestAPI from two microservices, Feed and User
+2. [The RestAPI Feed Backend](https://github.com/moboey/cloud-developer/tree/master/course-03/exercises/udacity-c3-restapi-feed), a Node-Express microservice which provides feed posting and retrieving services
+3. [The RestAPI User Backend](https://github.com/moboey/cloud-developer/tree/master/course-03/exercises/udacity-c3-restapi-feed), a Node-Express microservice which provides user registration and login services
 3. [The Image Filtering Microservice](https://github.com/moboey/cloud-developer/tree/master/course-02/project/image-filter-starter-code), the final project for the course. It is a Node-Express application which runs a simple script to process images.
 ***
+## Docker image repositories
+The docker images can be found here:
+[moboey/reverseproxy](https://hub.docker.com/repository/docker/moboey/reverseproxy)
+[moboey/udacity-frontend](https://hub.docker.com/repository/docker/moboey/udacity-frontend)
+[moboey/udacity-restapi-user](https://hub.docker.com/repository/docker/moboey/udacity-restapi-user)
+[moboey/udacity-restapi-feed](https://hub.docker.com/repository/docker/moboey/udacity-restapi-feed)
 
 ## Getting Setup
 
