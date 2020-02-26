@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
 data:
-  AWS_MEDIA_BUCKET: myudacitys3-charlesboey-dev
+  AWS_MEDIA_BUCKET: XXXX
   AWS_PROFILE: default
   AWS_REGION: us-east-2
-  JWT_SECRET: eowihgwiggea
-  POSTGRES_DATABASE: myudacity
-  POSTGRES_HOST: myudacity.cyu8cjhclspj.us-east-1.rds.amazonaws.com
+  JWT_SECRET: XXXX
+  POSTGRES_DATABASE: XXXX
+  POSTGRES_HOST: XXXX
   URL: http://localhost:8100  
 metadata:
   name: env-config
