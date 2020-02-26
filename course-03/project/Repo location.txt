@@ -1,0 +1,11 @@
+Travis
+https://travis-ci.com/moboey/cloud-developer
+
+Github
+https://github.com/moboey/cloud-developer
+
+Docker images
+https://hub.docker.com/repository/docker/moboey/reverseproxy
+https://hub.docker.com/repository/docker/moboey/udacity-frontend
+https://hub.docker.com/repository/docker/moboey/udacity-restapi-user
+https://hub.docker.com/repository/docker/moboey/udacity-restapi-feed
