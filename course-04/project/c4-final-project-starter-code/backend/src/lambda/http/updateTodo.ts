@@ -26,7 +26,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     }
 }).promise()
 
-const createAt = result.Items[0].createAt
+const createdAt = result.Items[0].createdAt
 
 if (result.Count == 0) {   
   logger.error("Unable to update record. Todo ID not found") 
@@ -38,7 +38,7 @@ if (result.Count == 0) {
     TableName: todoTable,
     Key: {
         "todoId": todoId,
-        "createAt": createAt
+        "createdAt": createdAt
     },
     UpdateExpression: "set #name =:a, #dueDate =:b, done =:c ", 
     ExpressionAttributeNames: {

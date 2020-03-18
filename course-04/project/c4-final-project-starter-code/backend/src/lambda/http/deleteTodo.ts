@@ -29,13 +29,13 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
 if (result.Count == 0) {   
   logger.error("Unable to delete record. Todo ID not found") 
   throw new Error('Unable to delete record. Todo ID not found')
-}
-  const createAt = result.Items[0].createAt
+} 
+  const createdAt = result.Items[0].createAt
   const params = {
     TableName:todoTable,
     Key:{
         'todoId': todoId,
-        'createAt': createAt
+        'createdAt': createdAt
     }
     
 };

@@ -91,9 +91,9 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
-          #reqValidatorName: RequestBodyValidator
-          #requestModels:
-           # 'application/json': TodoCreate
+          reqValidatorName: RequestBodyValidator
+          requestModels:
+            'application/json': TodoCreate
 
   # TODO: Configure this function
   UpdateTodo:
