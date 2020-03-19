@@ -21,9 +21,9 @@ provider:
   environment:
     AUTH_0_SECRET_ID: Auth0Secret-${self:provider.stage}
     AUTH_0_SECRET_FIELD: auth0Secret
-    DUE_DATE_INDEX: DueDateIndex
-    TODO_TABLE: TODO-${self:provider.stage}
-    TODO_S3_BUCKET: TODO-images-${self:provider.stage}
+    USERID_INDEX: UserIdIndex
+    TODO_TABLE: todotitemtable-${self:provider.stage}
+    TODO_S3_BUCKET: 20200319todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
 
   iamRoleStatements:
@@ -41,6 +41,11 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:Query
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_TABLE}
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_TABLE}/index/${self:provider.environment.USERID_INDEX}
+    
     - Effect: Allow
       Action:
         - s3:PutObject
@@ -65,14 +70,13 @@ custom:
     models:      
       - name: TodoCreate
         contentType: application/json
-        schema: ${file(models/create-todo-request.json)}
+        schema: ${file(model/create-todo-request.json)}
 
 functions:
 
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
-
-  # TODO: Configure this function
+ 
   GetTodos:
     handler: src/lambda/http/getTodos.handler
     events:
@@ -81,8 +85,7 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
-
-  # TODO: Configure this function
+ 
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
     events:
@@ -94,8 +97,10 @@ functions:
           reqValidatorName: RequestBodyValidator
           requestModels:
             'application/json': TodoCreate
-
-  # TODO: Configure this function
+          request: 
+            schema:
+              application/json: ${file(model/create-todo-request.json)}
+ 
   UpdateTodo:
     handler: src/lambda/http/updateTodo.handler
     events:
@@ -103,8 +108,8 @@ functions:
           method: patch
           path: todos/{todoId}
           cors: true 
-
-  # TODO: Configure this function
+          authorizer: Auth
+ 
   DeleteTodo:
     handler: src/lambda/http/deleteTodo.handler
     events:
@@ -113,21 +118,21 @@ functions:
           path: todos/{todoId}
           cors: true 
           authorizer: Auth
-
-  # TODO: Configure this function
+ 
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
     events:
       - http:
           method: post
           path: todos/{todoId}/attachment
+          cors: true
+          authorizer: Auth
 
 
 
 
 resources:
-  Resources:
-    # TODO: Add any necessary AWS resources
+  Resources: 
     GatewayResponseDefault4XX:
       Type: AWS::ApiGateway::GatewayResponse
       Properties:
@@ -144,9 +149,9 @@ resources:
         AttributeDefinitions:
           - AttributeName: todoId
             AttributeType: S
-          - AttributeName: createdAt
+          - AttributeName: userId
             AttributeType: S
-          - AttributeName: dueDate
+          - AttributeName: createdAt
             AttributeType: S
         KeySchema:
           - AttributeName: todoId
@@ -155,10 +160,10 @@ resources:
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODO_TABLE}
-        GlobalSecondaryIndexes:
-          - IndexName: ${self:provider.environment.DUE_DATE_INDEX}
+        GlobalSecondaryIndexes: 
+          - IndexName: ${self:provider.environment.USERID_INDEX}
             KeySchema:
-            - AttributeName: dueDate
+            - AttributeName: userId
               KeyType: HASH
             Projection:
               ProjectionType: ALL
@@ -205,3 +210,36 @@ resources:
           Ref: ApiGatewayRestApi
         ValidateRequestBody: true
         ValidateRequestParameters: false
+
+    AttachmentsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.TODO_S3_BUCKET}        
+        CorsConfiguration:
+          CorsRules:
+            -
+              AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+                - HEAD
+              MaxAge: 3000
+    
+    BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        PolicyDocument:
+          Id: MyPolicy
+          Version: "2012-10-17"
+          Statement:
+            - Sid: PublicReadForGetBucketObjects
+              Effect: Allow
+              Principal: '*'
+              Action: 's3:GetObject'
+              Resource: 'arn:aws:s3:::${self:provider.environment.TODO_S3_BUCKET}/*'
+        Bucket: !Ref AttachmentsBucket
